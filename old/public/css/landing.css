@@ -1,0 +1,21 @@
+﻿header {
+    background-image: url("https://s0.rbk.ru/v6_top_pics/media/img/4/04/346843326750044.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.hero {
+    background-color: #f8f9fa;
+    padding: 100px 0;
+}
+
+.features {
+    padding: 60px 0;
+}
+
+.footer {
+    background-color: #343a40;
+    color: white;
+    padding: 20px 0;
+}
