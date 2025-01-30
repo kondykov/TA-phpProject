@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Contracts\IdentityRepositoryInterface;
 use App\Models\User;
+use Spatie\Permission\Models\Role;
 use Webmozart\Assert\Assert;
 
 class IdentityRepository implements IdentityRepositoryInterface
@@ -16,35 +17,25 @@ class IdentityRepository implements IdentityRepositoryInterface
 
     public function getByEmail(string $email)
     {
-        Assert::email($email);
-        $user = User::where('email', $email)->first();
-        Assert::null($user); // Исправлено на Assert::null
-
-        return $user;
+        // TODO: Implement getByEmail() method.
     }
 
-    public function create(User $user)
+    public function CreateRole(string $roleName, ?array $permissions = [])
     {
-        // Проверяем, существует ли пользователь с таким email
-        $userExist = $this->getByEmail($user->getEmailForVerification());
-        Assert::null($userExist); // Исправлено на Assert::null
+        $roleExists = Role::exists($roleName);
 
-        // Сохраняем нового пользователя
-        $user->save();
+        Assert::notNull($roleExists);
+
+        $role = new Role();
+        $role->name = $roleName;
+        if ($permissions) {
+            $role->permissions = $permissions;
+        }
+        $role->save();
     }
 
-    public function updateById(string $id, User $user)
+    public function CreateUser(User $user)
     {
-        // TODO: Implement updateById() method.
-    }
-
-    public function deleteById(string $id)
-    {
-        // TODO: Implement deleteById() method.
-    }
-
-    public function save(User $user)
-    {
-        // TODO: Implement save() method.
+        // TODO: Implement CreateUser() method.
     }
 }

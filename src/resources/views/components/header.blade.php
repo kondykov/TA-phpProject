@@ -7,7 +7,7 @@
                     <a class="navbar-brand font-weight-bolder ms-sm-3 text-sm"
                        href="https://demos.creative-tim.com/material-kit/index" rel="tooltip"
                        title="Designed and Coded by Creative Tim" data-placement="bottom" target="_blank">
-                        CRM
+                        {{ __('message.AppTitle') }}
                     </a>
                     <button class="navbar-toggler shadow-none ms-2" type="button" data-bs-toggle="collapse"
                             data-bs-target="#navigation" aria-controls="navigation" aria-expanded="false"
@@ -78,14 +78,25 @@
 
                                 </div>
                             </li>
-
+                            @can('viewDashboard')
+                                <li class="nav-item ms-lg-auto">
+                                    <a class="nav-link nav-link-icon me-2" href=" {{ route('dashboard') }} ">
+                                        <i class="fa fa-github me-1"></i>
+                                        <p class="d-inline text-sm z-index-1 font-weight-semibold" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="{{ __('message.ViewDashboard') }}">
+                                            {{ __('message.Dashboard') }}
+                                        </p>
+                                    </a>
+                                </li>
+                            @endcan
                             <li class="nav-item my-auto ms-3 ms-lg-0">
                                 @auth
                                     <a href=" {{ route('logout') }} "
-                                       class="btn  bg-gradient-dark  mb-0 mt-2 mt-md-0">Выйти</a>
+                                       class="btn  bg-gradient-dark  mb-0 mt-2 mt-md-0"> {{__('message.Logout')}}</a>
                                 @else
+                                    <a href=" {{ route('register') }} "
+                                       class="btn  bg-outline-dark  mb-0 mt-2 mt-md-0">{{ __('message.Register') }}</a>
                                     <a href=" {{ route('login') }} "
-                                       class="btn  bg-gradient-dark  mb-0 mt-2 mt-md-0">Войти</a>
+                                       class="btn  bg-gradient-dark  mb-0 mt-2 mt-md-0">{{ __('message.Login') }}</a>
                                 @endauth
                             </li>
                         </ul>

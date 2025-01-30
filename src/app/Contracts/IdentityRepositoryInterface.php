@@ -3,6 +3,7 @@
 namespace App\Contracts;
 
 use App\Models\User;
+use Spatie\Permission\Models\Role;
 
 interface IdentityRepositoryInterface
 {
@@ -10,11 +11,6 @@ interface IdentityRepositoryInterface
 
     public function getByEmail(string $email);
 
-    public function create(User $user);
-
-    public function updateById(string $id, User $user);
-
-    public function deleteById(string $id);
-
-    public function save(User $user);
+    public function CreateRole(string $roleName, ?array $permissions = []);
+    public function CreateUser(User $user);
 }

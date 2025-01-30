@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
@@ -29,6 +31,7 @@ class UserController extends Controller
 
         if (auth()->attempt($credentials)) {
             $user = auth()->user();
+            Role::findByName('admin')->givePermissionTo(Permission::all());
             return to_route('home');
         } else {
             return Redirect::back();

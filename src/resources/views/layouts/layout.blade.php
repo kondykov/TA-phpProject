@@ -10,7 +10,7 @@
     @yield('head')
 
 </head>
-<body class="index-page bg-gray-200">
+<body class="index-page bg-gray-200 @yield('bodyCss')" id="body">
     @yield('main')
     @yield('scripts')
 </body>
