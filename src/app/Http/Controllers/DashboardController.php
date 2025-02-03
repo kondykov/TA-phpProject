@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Contracts\IdentityRepositoryInterface;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\View;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
@@ -82,15 +83,44 @@ class DashboardController extends Controller
         ]);
 
         $roleName = $request->input('roleName');
-        $permissions = $request->input('permissions');
+        $permissions = $request->input('perm');
 
         $this->identityRepository->CreateRole($roleName, $permissions);
 
         return to_route('security.show');
     }
 
-    public function GetRoleEditView(Request $request)
+    public function GetRoleEditView(Request $request, $roleId)
     {
-        return;
+        try {
+            $role = Role::findById($roleId);
+            if($roleId == 1) {
+                return redirect::route('security.show')->with('error', __('message.Permission denied'));
+            }
+        } catch (\Throwable $e) {
+            return redirect::route('security.show')->with('error', $e->getMessage());
+        }
+
+        return view('dashboard.body.security.rolesEdit', [
+            'role' => $role,
+            'permissions' => Permission::paginate(100),
+        ]);
+    }
+
+    public function UpdateRole(Request $request, $roleId)
+    {
+        $roleName = $request->input('roleName');
+        $permissions = $request->input('perm');
+        $this->identityRepository->UpdateRole($roleId, $roleName, $permissions);
+        return to_route('security.show', []);
+    }
+
+    public function DeleteRole(Request $request, $roleId)
+    {
+        if($roleId == 1) {
+            return redirect::route('security.show')->with('error', __('message.Permission denied'));
+        }
+        $this->identityRepository->DeleteRole($roleId);
+        return to_route('security.show');
     }
 }

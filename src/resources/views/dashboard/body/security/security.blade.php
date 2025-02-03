@@ -2,6 +2,9 @@
 
 @section('body')
     <div class="container-fluid py-2">
+        @if(session('error'))
+            @include('components.alerts.warning', ['slot' => session('error')])
+        @endif
         <div class="row">
             <div class="col-12">
                 <div class="card my-4">
@@ -42,26 +45,40 @@
                                             </span>
                                             </td>
                                             <td class="align-middle">
-                                                @can('editUser')
-                                                    @if($role->name == 'admin')
-                                                        <span
-                                                            class="text-secondary font-weight-bold text-xs"> {{ __('message.ProtectedProperty') }} </span>
-                                                    @else
-                                                        <a href="javascript:"
-                                                           class="text-secondary font-weight-bold text-xs">
-                                                            <i class="material-symbols-rounded opacity-5"> edit </i>
-                                                            {{ __('message.Edit') }}
-                                                        </a>
-                                                    @endif
-                                                @endcan
+                                                @if($role->name == 'admin')
+                                                    <span
+                                                        class="text-secondary font-weight-bold text-xs"> {{ __('message.ProtectedProperty') }} </span>
+                                                @else
+                                                    <div class="d-flex">
+                                                        @can('editRolesOrPermissions')
+                                                            <a href=" {{ route('security.roles.edit.show', ['id' => $role->id]) }} "
+                                                               class="font-weight-bold text-xs btn btn-success m-0 me-2">
+                                                                {{ __('message.Edit') }}
+                                                            </a>
+                                                        @endcan
+                                                        @can('removeRolesOrPermissions')
+                                                            <form
+                                                                action="{{ route('security.roles.delete.store', ['id' => $role->id]) }}"
+                                                                method="post"
+                                                            >
+                                                                @method('DELETE')
+                                                                @csrf
+
+                                                                <button class="font-weight-bold text-xs btn btn-danger m-0">
+                                                                    {{ __('message.Delete') }}
+                                                                </button>
+                                                            </form>
+                                                        @endcan
+                                                    </div>
+                                                @endif
                                             </td>
                                         </tr>
                                     @endforeach
                                     <tr>
-                                    <td class="align-middle">
-                                        <a href="{{ route('security.roles.create.store') }}"
-                                           class="btn btn-dark btn-sm mx-3 mt-3"> {{ __('message.CreateRole') }} </a>
-                                    </td>
+                                        <td class="align-middle">
+                                            <a href="{{ route('security.roles.create.store') }}"
+                                               class="btn btn-dark btn-sm"> {{ __('message.CreateRole') }} </a>
+                                        </td>
                                         <td></td>
                                         <td></td>
                                     </tr>

@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Contracts\IdentityRepositoryInterface;
 use App\Models\User;
+use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use Webmozart\Assert\Assert;
 
@@ -20,22 +21,57 @@ class IdentityRepository implements IdentityRepositoryInterface
         // TODO: Implement getByEmail() method.
     }
 
-    public function CreateRole(string $roleName, ?array $permissions = [])
+    public function CreateRole(string $roleName, ?array $permissionsIds = [])
     {
         $roleExists = Role::exists($roleName);
 
-        Assert::notNull($roleExists);
+        Assert::true($roleExists);
+
+        $permissions = [];
+        foreach (array_keys($permissionsIds) as $permissionId) {
+            $permissions[] = Permission::findById($permissionId);
+        }
+
 
         $role = new Role();
         $role->name = $roleName;
-        if ($permissions) {
-            $role->permissions = $permissions;
-        }
         $role->save();
+        $role->givePermissionTo(array_values($permissions));
     }
 
     public function CreateUser(User $user)
     {
         // TODO: Implement CreateUser() method.
+    }
+
+    public function UpdateRole(int $id, string $roleName, ?array $permissionsIds = [])
+    {
+        $roleExists = Role::exists($roleName);
+
+        Assert::true($roleExists);
+
+        $permissions = [];
+        foreach (array_keys($permissionsIds) as $permissionId) {
+            $permissions[] = Permission::findById($permissionId);
+        }
+        $role = Role::findById($id);
+        $role->name = $roleName;
+        $role->syncPermissions($permissions);
+        $role->save();
+    }
+
+    public function DeleteRole(int $id)
+    {
+        if($id == 1) {
+            return false;
+        }
+
+        $roleExists = Role::findById($id);
+        if ($roleExists) {
+            $roleExists->delete();
+            return true;
+        }
+
+        return false;
     }
 }

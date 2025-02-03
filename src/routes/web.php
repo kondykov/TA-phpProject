@@ -34,6 +34,9 @@ route::middleware('role_or_permission:viewDashboard')->prefix('/dashboard')->gro
         route::prefix('/roles')->name('roles.')->middleware('role_or_permission:createRolesOrPermissions')->group(function () {
             route::get('/create', [DashboardController::class, 'GetRolesCreateView'])->name('create.show');
             route::post('/create', [DashboardController::class, 'CreateRole'])->name('create.store');
+            route::get('/{id}/edit', [DashboardController::class, 'GetRoleEditView'])->name('edit.show');
+            route::post('/{id}/edit', [DashboardController::class, 'UpdateRole'])->name('update.store');
+            route::delete('/{id}/delete', [DashboardController::class, 'DeleteRole'])->name('delete.store');
         });
     });
 });

@@ -11,6 +11,9 @@ interface IdentityRepositoryInterface
 
     public function getByEmail(string $email);
 
-    public function CreateRole(string $roleName, ?array $permissions = []);
+    public function CreateRole(string $roleName, ?array $permissionsIds = []);
+
+    public function UpdateRole(int $id, string $roleName, ?array $permissionsIds = []);
+    public function DeleteRole(int $id);
     public function CreateUser(User $user);
 }

@@ -9,12 +9,14 @@ return [
     'Logout' => 'Logout',
     'Register' => 'Register',
 
+
     'UsersTable' => 'Users table',
     'User' => 'User',
     'Role' => 'Role',
     'Roles' => 'Roles',
     'CreateRole' => 'Create role',
     'CreateUser' => 'Create user',
+    'RoleUpdate' => 'Update role',
     'CreatePermission' => 'Create permission',
     'AssignPermission' => 'Assign permission',
     'RemovePermission' => 'Remove permission',
@@ -27,6 +29,7 @@ return [
     'CreatedAt' => 'Created At',
     'UpdatedAt' => 'Updated At',
     'Edit' => 'Edit',
+    'Delete' => 'Delete',
 
     'UsersNotFound' => 'Users not found',
 
@@ -47,4 +50,15 @@ return [
     'Preview' => 'Preview',
     'CreateRoleTitle' => 'Create a new role',
     'CreateRoleSubTitle' => 'Fill out the form to create a new role',
+    'EditRoleTitle' => 'Edit a role',
+    'EditRoleSubTitle' => 'Fill out the form to edit a role',
+
+    'Success' => 'Success',
+    'Failed' => 'Failed',
+    'Warning' => 'Warning',
+    'Info' => 'Info',
+    'Error' => 'Error',
+
+    'Permission denied' => 'Permission denied',
+
 ];
