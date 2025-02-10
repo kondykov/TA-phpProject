@@ -32,3 +32,14 @@
       - "8878:3306"
     command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci
     container_name: app.db      
+
+  node:
+    build:
+      context: .
+      dockerfile: ./_docker/nodejs/Dockerfile
+    tty: true
+    ports:
+      - "5173:5173"
+    working_dir: /var/www
+    volumes:
+      - ./src/:/var/www
