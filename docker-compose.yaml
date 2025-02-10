@@ -43,3 +43,6 @@
     working_dir: /var/www
     volumes:
       - ./src/:/var/www
+    depends_on:
+      - app
+    container_name: app.node
