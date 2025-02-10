@@ -1,9 +1,7 @@
 @extends('layouts.layout')
 @section('head')
     @include('layouts.head')
-    @yield('head')
 @endsection
 @section('scripts')
     @include('layouts.scripts')
-    @yield('scripts')
 @endsection

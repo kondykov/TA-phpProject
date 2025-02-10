@@ -25,6 +25,10 @@ class RolesAndPermissionSeeder extends Seeder
         Permission::create(['name' => 'createRolesOrPermissions']);
         Permission::create(['name' => 'removeRolesOrPermissions']);
 
+        Permission::create(['name' => 'createPost']);
+        Permission::create(['name' => 'editPost']);
+        Permission::create(['name' => 'deletePost']);
+
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
         Role::create(['name' => 'admin'])

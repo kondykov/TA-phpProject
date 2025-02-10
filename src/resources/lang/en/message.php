@@ -61,4 +61,9 @@ return [
 
     'Permission denied' => 'Permission denied',
 
+    'Posts' => 'Posts',
+    'PostList' => 'Posts list',
+    'CreatePost' => 'Create a post',
+    'EditPostTitle' => 'Edit a post',
+    'PostsNotFound' => 'Posts not found',
 ];

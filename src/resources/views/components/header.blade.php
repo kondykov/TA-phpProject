@@ -21,70 +21,15 @@
                     <div class="collapse navbar-collapse pt-3 pb-2 py-lg-0 w-100" id="navigation">
                         <ul class="navbar-nav navbar-nav-hover ms-auto">
                             <li class="nav-item dropdown dropdown-hover mx-2">
-                                <a class="nav-link ps-2 d-flex cursor-pointer align-items-center font-weight-semibold"
-                                   id="dropdownMenuPages" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="material-symbols-rounded opacity-6 me-2 text-md">dashboard</i>
-                                    Pages
-                                    <img src="{{ asset('img/down-arrow-dark.svg') }}" alt="down-arrow"
-                                         class="arrow ms-auto ms-md-2">
-                                </a>
-                                <div
-                                    class="dropdown-menu dropdown-menu-animation ms-n3 dropdown-md p-3 border-radius-xl mt-0 mt-lg-3"
-                                    aria-labelledby="dropdownMenuPages">
-                                    <div class="d-none d-lg-block">
-                                        <h6 class="dropdown-header text-dark font-weight-bolder d-flex align-items-center px-1">
-                                            Landing Pages
-                                        </h6>
-                                        <a href="./pages/about-us.html" class="dropdown-item border-radius-md">
-                                            <span>About Us</span>
-                                        </a>
-                                        <a href="./pages/contact-us.html" class="dropdown-item border-radius-md">
-                                            <span>Contact Us</span>
-                                        </a>
-                                        <a href="./pages/author.html" class="dropdown-item border-radius-md">
-                                            <span>Author</span>
-                                        </a>
-                                        <h6 class="dropdown-header text-dark font-weight-bolder d-flex align-items-center px-1 mt-3">
-                                            Account
-                                        </h6>
-                                        <a href="./pages/sign-in.html" class="dropdown-item border-radius-md">
-                                            <span>Sign In</span>
-                                        </a>
-                                    </div>
 
-                                    <div class="d-lg-none">
-                                        <h6 class="dropdown-header text-dark font-weight-bolder d-flex align-items-center px-1">
-                                            Landing Pages
-                                        </h6>
-
-                                        <a href="./pages/about-us.html" class="dropdown-item border-radius-md">
-                                            <span>About Us</span>
-                                        </a>
-                                        <a href="./pages/contact-us.html" class="dropdown-item border-radius-md">
-                                            <span>Contact Us</span>
-                                        </a>
-                                        <a href="./pages/author.html" class="dropdown-item border-radius-md">
-                                            <span>Author</span>
-                                        </a>
-
-                                        <h6 class="dropdown-header text-dark font-weight-bolder d-flex align-items-center px-1 mt-3">
-                                            Account
-                                        </h6>
-                                        <a href="./pages/sign-in.html" class="dropdown-item border-radius-md">
-                                            <span>Sign In</span>
-                                        </a>
-
-                                    </div>
-
-                                </div>
                             </li>
                             @can('viewDashboard')
                                 <li class="nav-item ms-lg-auto">
-                                    <a class="nav-link nav-link-icon me-2" href=" {{ route('dashboard') }} ">
-                                        <i class="fa fa-github me-1"></i>
-                                        <p class="d-inline text-sm z-index-1 font-weight-semibold" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="{{ __('message.ViewDashboard') }}">
-                                            {{ __('message.Dashboard') }}
-                                        </p>
+                                    <a class="nav-link ps-2 d-flex cursor-pointer align-items-center me-2"
+                                       href="{{ route('dashboard') }}"
+                                    >
+                                        <i class="material-symbols-rounded opacity-6 me-2 text-md">dashboard</i>
+                                        {{__('message.Dashboard')}}
                                     </a>
                                 </li>
                             @endcan

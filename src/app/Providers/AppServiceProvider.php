@@ -3,7 +3,9 @@
 namespace App\Providers;
 
 use App\Contracts\IdentityRepositoryInterface;
+use App\Contracts\PostRepositoryInterface;
 use App\Repositories\IdentityRepository;
+use App\Repositories\PostRepository;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Sanctum\PersonalAccessToken;
@@ -17,6 +19,7 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->bind(IdentityRepositoryInterface::class, IdentityRepository::class);
+        $this->app->bind(PostRepositoryInterface::class, PostRepository::class);
     }
 
     /**

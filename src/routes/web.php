@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DashboardPostController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -21,6 +22,8 @@ route::middleware('auth')->group(function () {
     route::get('/logout', [UserController::class, 'Logout'])->name('logout');
 });
 
+#region dashboard
+
 route::middleware('role_or_permission:viewDashboard')->prefix('/dashboard')->group(function () {
     route::get('/', [DashboardController::class, 'GetDashboardView'])->name('dashboard');
     route::get('/users', [DashboardController::class, 'GetUsersTableView'])->name('users');
@@ -39,4 +42,19 @@ route::middleware('role_or_permission:viewDashboard')->prefix('/dashboard')->gro
             route::delete('/{id}/delete', [DashboardController::class, 'DeleteRole'])->name('delete.store');
         });
     });
+
+    route::prefix('/posts')->name('dashboard.posts.')->group(function () {
+        route::get('/', [DashboardPostController::class, 'GetPostsView'])->name('show');
+        route::get('/create', [DashboardPostController::class, 'GetCreatePostView'])->name('create');
+        route::post('/create', [DashboardPostController::class, 'CreatePost'])->name('create.store');
+        route::get('/{id}/edit', [DashboardPostController::class, 'GetEditPostView'])->name('edit.show');
+        route::put('/{id}/edit', [DashboardPostController::class, 'UpdatePost'])->name('update.store');
+        route::delete('/{id}/delete', [DashboardPostController::class, 'DeletePost'])->name('delete.store');
+
+        route::prefix('/ajax')->name('ajax.')->group(function () {
+            route::post('/update-thumbnail', [DashboardPostController::class, 'UpdateThumbnail'])->name('update.thumbnail');
+            route::post('/remove-thumbnail', [DashboardPostController::class, 'DeleteThumbnail'])->name('remove.thumbnail');
+        });
+    });
 });
+#endregion
