@@ -1,12 +1,11 @@
 <?php
 
+use App\Http\Controllers\ChatController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DashboardPostController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
-
-App::setLocale(env('APP_LOCALE'));
 
 route::get('/', HomeController::class)->name('home');
 
@@ -17,10 +16,14 @@ route::middleware('guest')->group(function () {
     Route::post('/register', [UserController::class, 'Register']);
     Route::post('/login', [UserController::class, 'Login']);
 });
+route::get('/chat/get-users', [ChatController::class, 'getChat'])->name('chat.get-users');
 
 route::middleware('auth')->group(function () {
     route::get('/logout', [UserController::class, 'Logout'])->name('logout');
+
+    route::get('/chat', [ChatController::class, 'index'])->name('chat');
 });
+
 
 #region dashboard
 

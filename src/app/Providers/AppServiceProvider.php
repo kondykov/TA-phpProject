@@ -2,8 +2,10 @@
 
 namespace App\Providers;
 
+use App\Contracts\ExtractorInterface;
 use App\Contracts\IdentityRepositoryInterface;
 use App\Contracts\PostRepositoryInterface;
+use App\Extractors\ApiDataExtractor;
 use App\Repositories\IdentityRepository;
 use App\Repositories\PostRepository;
 use Illuminate\Pagination\Paginator;

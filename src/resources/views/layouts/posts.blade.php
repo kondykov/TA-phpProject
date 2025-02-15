@@ -21,9 +21,8 @@
                         <div class="card">
                             <div class="card-header p-0 m-3 mt-n4 position-relative z-index-2">
                                 <a class="d-block blur-shadow-image">
-                                    <img
-                                        src="{{ $post->images()->first()->url ?? 'https://dummyimage.com/1600x900' }}"
-                                        alt="img-blur-shadow" class="img-fluid border-radius-lg">
+                                    <img src="{{ $post->images()->first()->url ?? 'https://dummyimage.com/1600x900' }}"
+                                         alt="img-blur-shadow" class="img-fluid border-radius-lg">
                                 </a>
                             </div>
                             <div class="card-body pt-2">
@@ -35,7 +34,7 @@
                                     {{ $post->content }}
                                 </p>
                                 <div class="author align-items-center">
-                                    <img src="{{ array_rand($fakeImages) }}" alt="avatar" class="avatar shadow border-radius-lg">
+                                    <img src="{{ $fakeImages[array_rand($fakeImages)] }}" alt="avatar" class="avatar shadow border-radius-lg">
                                     <div class="name ps-3">
                                         <span>{{ $creators[$post->user_id - 1]->name }}</span>
                                         <div class="stats">

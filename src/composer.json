@@ -8,10 +8,15 @@
     "require": {
         "php": "^8.2",
         "ext-http": "*",
+        "arthurkushman/php-wss": "^2.0",
+        "guzzlehttp/guzzle": "^7.0",
         "laravel/framework": "^11.31",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.9",
-        "spatie/laravel-permission": "^6.10"
+        "laravel/ui": "^4.6",
+        "spatie/laravel-permission": "^6.10",
+        "textalk/websocket": "^1.5",
+        "wrench/wrench": "^2.0"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
@@ -69,6 +74,6 @@
             "php-http/discovery": true
         }
     },
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
     "prefer-stable": true
 }

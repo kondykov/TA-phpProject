@@ -34,13 +34,20 @@ class RolesAndPermissionSeeder extends Seeder
         Role::create(['name' => 'admin'])
             ->givePermissionTo(Permission::all());
 
-        $user = User::factory()->create([
+        $chatMaanger = User::factory()->create([
+            'name' => 'CHAT MANAGER',
+            'email' => 'manager@no.reply',
+            'password' => Hash::make('manager'),
+            'is_protected' => true,
+        ]);
+        $admun = User::factory()->create([
             'name' => 'Test User',
             'email' => 'test@example.com',
             'password' => Hash::make('password'),
+            'is_protected' => true,
         ]);
 
-        $user->assignRole('admin');
+        $admun->assignRole('admin');
 
         User::factory(10)->create();
     }

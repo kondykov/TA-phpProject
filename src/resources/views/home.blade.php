@@ -3,7 +3,7 @@
 
 
 @section('main')
-    @include('components.header')
+    @include('components.navigation.white-fixed')
     @include('components.promo', [
     'mainTitle' => 'Home', 'subTitle' => 'The home page'
     ])
