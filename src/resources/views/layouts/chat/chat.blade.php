@@ -9,22 +9,15 @@
     @include('components.navigation.transparent', [
         'color' => 'text-white'
     ])
-    {{ Auth::getUser() }}
-    @verbatim
     <div id="app">
         <promo-component></promo-component>
 
-        <chat-component></chat-component>
+        <chat-component :token="'{{ $token }}'" :user="{{ $user->id }}"></chat-component>
     </div>
-    @endverbatim
-
     @include('components.footer')
 @endsection
 
 @section('scripts')
     @parent
     @vite('resources/js/app.js')
-    <script>
-        let message = 20;
-    </script>
 @endsection

@@ -20,5 +20,9 @@
         "tailwindcss": "^3.4.13",
         "vite": "^6.0",
         "vue": "^3.2.37"
+    },
+    "dependencies": {
+        "flatted": "^3.3.2",
+        "flatter": "^0.0.0"
     }
 }

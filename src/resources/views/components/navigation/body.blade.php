@@ -1,4 +1,3 @@
-
 <a class="navbar-brand font-weight-bolder ms-sm-3 text-sm {{ $color ?? '' }}"
    href="https://demos.creative-tim.com/material-kit/index" rel="tooltip"
    title="Designed and Coded by Creative Tim" data-placement="bottom" target="_blank">
@@ -15,6 +14,16 @@
 </button>
 <div class="collapse navbar-collapse pt-3 pb-2 py-lg-0 w-100" id="navigation">
     <ul class="navbar-nav navbar-nav-hover ms-auto">
+        @auth
+            <li class="nav-item ms-lg-auto">
+                <a class="nav-link ps-2 d-flex cursor-pointer align-items-center me-2"
+                   href="{{ route('chat') }}"
+                >
+                    <i class="material-symbols-rounded opacity-6 me-2 text-md">chat</i>
+                    {{__('message.Chat')}}
+                </a>
+            </li>
+        @endauth
         @can('viewDashboard')
             <li class="nav-item ms-lg-auto">
                 <a class="nav-link ps-2 d-flex cursor-pointer align-items-center me-2"

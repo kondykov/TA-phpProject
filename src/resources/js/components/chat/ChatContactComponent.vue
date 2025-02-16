@@ -1,6 +1,6 @@
 <script setup>
 const props = defineProps([
-    'lastMessage',
+    'last_message',
     'contactId',
     'isActive',
     'avatar',
@@ -19,7 +19,7 @@ console.log(props.isActive)
           <h6 class="mb-0" :class="{ 'text-white': isActive }"> {{ name }}
             <span class="badge badge-success"></span>
           </h6>
-          <p class="mb-0 text-sm" :class="{ 'text-white': isActive }"> {{ lastMessage }} </p>
+          <p class="mb-0 text-sm" :class="{ 'text-white': isActive }"> Chat id: {{ last_message }} </p>
         </div>
       </div>
     </div>

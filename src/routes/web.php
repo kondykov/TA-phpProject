@@ -16,10 +16,10 @@ route::middleware('guest')->group(function () {
     Route::post('/register', [UserController::class, 'Register']);
     Route::post('/login', [UserController::class, 'Login']);
 });
-route::get('/chat/get-users', [ChatController::class, 'getChat'])->name('chat.get-users');
 
 route::middleware('auth')->group(function () {
     route::get('/logout', [UserController::class, 'Logout'])->name('logout');
+    route::get('/chat/get-users', [ChatController::class, 'getChat'])->name('chat.get-users');
 
     route::get('/chat', [ChatController::class, 'index'])->name('chat');
 });

@@ -1,55 +1,181 @@
 <script setup>
 import ContactComponent from './chat/ChatContactComponent.vue';
 import MessageComponent from "./chat/message/MessageComponent.vue";
+import { stringify } from 'flatted';
 
-import {onMounted, ref} from "vue";
+import Spinner from "./Spinner.vue";
+import { DOT_NET_SERVICE_URL } from './../config';
+import {onMounted, ref, nextTick, onUpdated} from "vue";
+
+const props = defineProps([
+    'user',
+    'token'
+])
+
 
 const messageInput = ref("")
 const messages = ref([]);
 const messagesField = ref(null);
-
+const chatFetching = ref(false)
 const loading = ref(false)
-const chatUsers = ref(null)
+const chats = ref(null)
 const avatars = ref(null)
 const error = ref(null)
-const chatId = ref(null)
+const chatId = ref(1)
+const messageSent = ref(false)
+const sending = ref(false)
 
-const selectedChat = ref(null)
+let receivedMessage;
+
+
+
+const wsConnected = ref(false)
+let socket = new WebSocket("ws://" + DOT_NET_SERVICE_URL + '/ws/connect?token=' + props.token)
+
+
+socket.onopen = function(e) {
+    wsConnected.value = true
+};
+
+socket.onmessage = function(event) {
+    Receive(event)
+};
+
+socket.onclose = function(event) {
+    if (event.wasClean) {
+        alert(`[close] Соединение закрыто чисто, код=${event.code} причина=${event.reason}`);
+    } else {
+        alert('[close] Соединение прервано');
+    }
+    wsConnected.value = false
+};
+
+socket.onerror = function(error) {
+    alert(`[error]`);
+};
 
 onMounted(() => {
-    fetchUsers()
+    getChatMessages()
+    fetchChats()
 })
 
-setTimeout(() => {
-    window.Echo.channel(`message.sent.${chatId}`).listen('', (e) => {
-        console.log(e + ' chat id ' + chatId)
-    })
+onUpdated(()=>{
+    scrollToBottom()
 })
 
-const props = defineProps([
-    'user'
-])
+async function WebsocketSend(payload) {
+    if (wsConnected) {
+        console.log(payload)
+        socket.send(JSON.stringify(payload))
+        return true
+    }
+    return false
+}
 
-async function fetchUsers() {
-    loading.value = true; // Устанавливаем загрузку в true
-    try {
-        const response = await axios.get('chat/get-users', {});
-        console.log(response.data);
-        avatars.value = response.data.fakeImages;
-        chatUsers.value = response.data.users;
-    } catch (error) {
-        console.error('Ошибка при получении данных:', error);
-        error.value = error; // Сохраните ошибку, если нужно
-    } finally {
-        loading.value = false; // Устанавливаем загрузку в false
+async function Receive(event) {
+    let innerJsonString = JSON.parse(event.data)
+    let json = JSON.parse(innerJsonString);
+    console.log(json)
+    if (json.hasOwnProperty('success')){
+        if (json.success === true) {
+            messageInput.value = ""
+        }
+        sending.value = false
+    }
+    if (json.hasOwnProperty('chat_id') && json.hasOwnProperty('sender') && json.hasOwnProperty('content')) {
+        await WriteMessage(json)
     }
 }
 
-function send() {
+async function WriteMessage(data) {
+    if (chatId.value === data.chat_id) {
+        let receivedMessage = {
+            type: false,
+            content: data.content
+        }
+        if (props.user === data.sender) {
+            receivedMessage.type = 'sent'
+        } else {
+            receivedMessage.type = 'received'
+        }
+        messages.value.push({
+            type: receivedMessage.type,
+            content: receivedMessage.content
+        })
+    }
+}
+
+async function getChatMessages() {
+    loading.value = true;
+    const config = {
+        headers: {
+            Authorization: `Bearer ${props.token}`,
+        },
+    };
+    try {
+        const response = await axios.get(`api/chat/get-all-messages?chat_id=${chatId.value}`, config);
+        let data = response.data
+        console.log(data.data)
+        data.data.forEach((data) => {
+            WriteMessage({
+                content: data.content,
+                sender: data.user_id,
+                chat_id: data.chat_id,
+            })
+        })
+        console.log("346")
+    } catch (error) {
+        console.error('Ошибка при получении данных:', error);
+        error.value = error;
+    } finally {
+        loading.value = false;
+        await scrollToBottom()
+    }
+}
+
+async function fetchChats() {
+    chatFetching.value = true;
+    try {
+        const response = await axios.get(`api/chat/get-all`, {
+            headers: {
+                Authorization: `Bearer ${props.token}`
+            }
+        });
+        avatars.value = response.data.fakeImages;
+        chats.value = response.data.data;
+        chatId.value = chats.value[0]
+    } catch (error) {
+        console.error('Ошибка при получении данных:', error);
+        error.value = error;
+    } finally {
+        chatFetching.value = false;
+    }
+}
+
+async function send() {
     if (messageInput.value.trim() === '') return;
-    messages.value.push({type: 'sent', text: messageInput.value});
-    messageInput.value = "";
-    messagesField.value.scrollTop = messagesField.value.scrollHeight
+    sending.value = true
+    let payload = {
+        process_type: 3,
+        data: {
+            chat_id: chatId.value,
+            content: messageInput.value
+        }
+    }
+    await WebsocketSend(payload)
+}
+
+async function scrollToBottom() {
+    const container = messagesField.value;
+    if (container) {
+        container.scrollTop = container.scrollHeight;
+    }
+}
+
+async function selectChat(id) {
+    chatId.value = id
+    messages.value = []
+    let response = await getChatMessages()
 }
 </script>
 
@@ -58,7 +184,7 @@ function send() {
         <div class="section my-5">
             <div class="container">
                 <h2>Chat</h2>
-                <button @click="fetchUsers">Update</button>
+                <button @click="fetchChats">Update</button>
                 <div class="row flex-row">
                     <div class="col-lg-4">
                         <div class="card max-height-vh-70 overflow-auto overflow-x-hidden mb-5 mb-lg-0">
@@ -68,18 +194,19 @@ function send() {
                                     <input type="text" class="form-control">
                                 </div>
                             </form>
-                            <div v-if="loading">
-                                <div class="container">
-                                    Загрузка...
-                                </div>
+                            <div class="container d-flex justify-content-center p-3" v-if="chatFetching">
+                                <Spinner/>
                             </div>
                             <div v-if="error">{{ error.message }}</div>
-                            <div v-if="chatUsers">
+                            <div v-if="chats">
                                 <div class="card-body p-2">
-                                    <div v-for="user in chatUsers">
+                                    <div v-for="chat in chats">
                                         <ContactComponent
-                                            :name="user.name"
+                                            :name="chat.created_by === user ? chat.companion_name: chat.creator_name"
                                             :avatar="avatars"
+                                            :last_message="chat.id"
+                                            :is-active="chatId === chat.id"
+                                            @click="selectChat(chat.id)"
                                         />
                                     </div>
                                 </div>
@@ -152,14 +279,10 @@ function send() {
                                 </div>
                             </div>
                             <div class="card-body overflow-auto overflow-x-hidden" ref="messagesField">
-                                <message-component
-                                    :type="'received'"
-                                    :message="'sdgsdhsdh'"
-                                />
                                 <div v-for="msg in messages" :key="msg.timestamp">
                                     <message-component
                                         :type="msg.type"
-                                        :message="msg.text"
+                                        :message="msg.content"
                                     />
                                 </div>
                             </div>
@@ -171,10 +294,13 @@ function send() {
                                             type="text"
                                             class="form-control form-control-lg"
                                             v-model="messageInput"
+                                            :disabled="wsConnected === false"
                                         >
                                         <button
                                             class="btn bg-gradient-dark mb-0"
                                             @click="send"
+                                            :disabled="wsConnected === false || messageSent"
+
                                         >
                                             <i class="material-symbols-rounded">send</i>
                                         </button>

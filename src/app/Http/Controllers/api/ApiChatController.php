@@ -13,22 +13,41 @@ class ApiChatController extends Controller
 {
     public function getAll(Request $request)
     {
-        $token = $request->query('user_token');
-        if (!$this->verify($token)) {
-            return response()->json([
-                'error' => 'User token is invalid',
-            ]);
+        if ($request->input('is_manager')) {
+            $userToken = $request->query('user_token');
+            if (!$this->verify($userToken)) {
+                return response()->json([
+                    'error' => 'User token is invalid',
+                ], 401);
+            }
+            $user = $this->getUser($userToken);
+        } else {
+            /** @var User $user */
+            $user = $request->User();
         }
-        $chatsWhenCreator = Chat::where('created_by', $this->getUser($token)->id)->get();
-        $chatsWhenCompanion = Chat::where('companion', $this->getUser($token)->id)->get();
 
-        $result = array_unique(
+        $chatsWhenCreator = Chat::where('created_by', $user->id)->get();
+        $chatsWhenCompanion = Chat::where('companion', $user->id)->get();
+
+
+        $chats = array_unique(
             array_merge($chatsWhenCreator->toArray(), $chatsWhenCompanion->toArray()),
             SORT_REGULAR
         );
 
+        $users = User::whereIn('id', array_column($chats, 'created_by'))->get();
+
+        foreach ($chats as &$chat) {
+            $createdBy = User::firstWhere('id', $chat['created_by']);
+            $chat['creator_name'] = $createdBy->name ?? 'Unknown';
+
+            $companion = User::firstWhere('id', $chat['companion']);
+            $chat['companion_name'] = $companion->name ?? 'Unknown';
+        }
+
         return response()->json([
-            'data' => $result,
+            'data' => $chats,
+            'fakeImages' => 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Outdoors-man-portrait_%28cropped%29.jpg/1200px-Outdoors-man-portrait_%28cropped%29.jpg',
         ]);
     }
 
@@ -116,7 +135,14 @@ class ApiChatController extends Controller
         }
         /** @var User $user */
         $user = $this->getUser($userToken);
-        if ($chat->createdBy == $user->id || $chat->companion == $user->id) {
+        if ($chat->created_by == $user->id || $chat->companion == $user->id) {
+            $receiver = null;
+            if ($chat->created_by == $user->id) {
+                $receiver = $chat->companion;
+            } else {
+                $receiver = $chat->created_by;
+            }
+
             $message = new ChatMessage();
             $message->user_id = $user->id;
             $message->chat_id = $chat->id;
@@ -125,7 +151,10 @@ class ApiChatController extends Controller
             $chat->messages()->save($message);
 
             return response()->json([
-                'data' => 'null',
+                'data' => [
+                    'chat_id' => $chat->id,
+                    'receiver' => $receiver,
+                ],
             ]);
         }
         return response()->json([
@@ -135,17 +164,22 @@ class ApiChatController extends Controller
 
     public function getAllMessages(Request $request)
     {
-        $userToken = $request->query('user_token');
-        if (!$this->verify($userToken)) {
-            return response()->json(['error' => 'Token is invalid'], 401);
+        if ($request->input('is_manager')) {
+            $userToken = $request->query('user_token');
+            if (!$this->verify($userToken)) {
+                return response()->json([
+                    'error' => 'User token is invalid',
+                ], 401);
+            }
+            $user = $this->getUser($userToken);
+        } else {
+            $user = $request->User();
         }
-
-        $user = $this->getUser($userToken);
 
         if ($user === null) {
             return response()->json([
                 'error' => 'Token is invalid',
-            ]);
+            ], 401);
         }
 
         $chatId = $request->input('chat_id');
@@ -154,13 +188,13 @@ class ApiChatController extends Controller
         if ($chat === null) {
             return response()->json([
                 'error' => 'chat_id not found',
-            ]);
+            ], 404);
         }
 
-        $messages = $chat->messages()->paginate(1);
+        $messages = $chat->messages()->paginate(500);
 
         return response()->json([
-            'total_pages' => $messages->total(),
+            'total_pages' => $messages->lastPage(),
             'current_page' => $messages->currentPage(),
             'data' => $messages->all()
         ]);

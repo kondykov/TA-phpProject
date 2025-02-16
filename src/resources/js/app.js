@@ -1,5 +1,4 @@
 import './bootstrap';
-import './echo.js'
 import './config.js'
 import { createApp } from 'vue';
 

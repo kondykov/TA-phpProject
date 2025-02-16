@@ -66,4 +66,6 @@ return [
     'CreatePost' => 'Create a post',
     'EditPostTitle' => 'Edit a post',
     'PostsNotFound' => 'Posts not found',
+
+    'Chat' => 'Chat',
 ];
