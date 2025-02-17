@@ -36,7 +36,7 @@
                                 <div class="author align-items-center">
                                     <img src="{{ $fakeImages[array_rand($fakeImages)] }}" alt="avatar" class="avatar shadow border-radius-lg">
                                     <div class="name ps-3">
-                                        <span>{{ $creators[$post->user_id - 1]->name }}</span>
+                                        <span>{{ $post->user()->first()->name }}</span>
                                         <div class="stats">
                                             <small>Posted on {{ $post->created_at->format('d M y h:m') }}</small>
                                         </div>

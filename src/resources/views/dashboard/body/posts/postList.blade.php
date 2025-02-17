@@ -92,6 +92,9 @@
                                                     <a href="#" class="dataTable-sorter">Post</a>
                                                 </th>
                                                 <th data-sortable="" style="width: 29.3388%;">
+                                                    <a href="#" class="dataTable-sorter">Category</a>
+                                                </th>
+                                                <th data-sortable="" style="width: 29.3388%;">
                                                     <a href="#" class="dataTable-sorter">Status</a>
                                                 </th>
                                                 <th data-sortable="" style="width: 29.3388%;">
@@ -115,6 +118,9 @@
                                                             @endif
                                                             <h6 class="ms-3 my-auto"> {{ $post->title }}</h6>
                                                         </div>
+                                                    </td>
+                                                    <td>
+                                                        {{ $post?->category()->first()->name ?? 'Out of category' }}
                                                     </td>
                                                     <td>
                                                         @php

@@ -4,19 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Models\Post;
 use App\Models\User;
-use Illuminate\View\View;
 
 class HomeController extends Controller
 {
     public function __invoke()
     {
-        $posts = Post::where('visible', 1)->orderBy('created_at', 'desc')->get();
-        $userIds = $posts->pluck('user_id')->unique();
-        $users = User::whereIn('id', $userIds)->get();
+        $posts = Post::where('visible', 1)
+            ->orderBy('created_at', 'desc')
+            ->with('user')
+            ->get();
 
         return view('home', [
             'posts' => $posts,
-            'creators' => $users,
             'fakeImages' => [
                 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Outdoors-man-portrait_%28cropped%29.jpg/1200px-Outdoors-man-portrait_%28cropped%29.jpg',
                 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcThgvtbGZaid9GYER_WaEI5pitR4W32IRwWsQ&s',

@@ -4,16 +4,26 @@ namespace App\Repositories;
 
 use App\Contracts\PostRepositoryInterface;
 use App\Models\Post;
+use App\Models\PostCategory;
 use App\Models\PostImage;
+use App\Models\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 
 class PostRepository implements PostRepositoryInterface
 {
 
-    public function Create(string $title, ?string $content = null)
+    public function Create(string $title, string $content, User $user, ?PostCategory $category): Post
     {
-        // ignored
+        $post = new Post();
+        $post->title = $title;
+        $post->content = $content;
+        $post->user_id = auth()->id();
+        if($category) {
+            $post->category()->associate($category);
+        }
+        $post->save();
+        return $post;
     }
 
     public function FindById(int $id)
@@ -21,7 +31,7 @@ class PostRepository implements PostRepositoryInterface
         return Post::find($id);
     }
 
-    public function Update(int $id, array $validatedFields)
+    public function Update(Post $post)
     {
         $title = $validatedFields['title'];
         $content = $validatedFields['content'];
@@ -29,7 +39,7 @@ class PostRepository implements PostRepositoryInterface
         $post = $this->FindById($id);
         $post->title = $title;
         $post->content = $content;
-        $post->visible = $validatedFields['visible'] ?? false;
+        $post->visible = (bool)$validatedFields['visible'];
         return $post->save();
     }
 
@@ -44,11 +54,8 @@ class PostRepository implements PostRepositoryInterface
             return false;
         }
 
-        $process = Storage::disk('public')->putFileAs('uploads/' . $post->id . '/', $file, $file->getClientOriginalName());
+        Storage::disk('public')->putFileAs('uploads/' . $post->id . '/', $file, $file->getClientOriginalName());
 
-        if ($process) {
-            return false;
-        }
         $url = Storage::disk('public')->url('uploads/' . $post->id . '/' . $file->getClientOriginalName());
 
         $img = new PostImage();

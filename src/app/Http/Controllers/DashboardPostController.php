@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Contracts\PostRepositoryInterface;
 use App\Models\Post;
+use App\Models\PostCategory;
 use App\Models\PostImage;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 
 class DashboardPostController extends Controller
 {
@@ -30,7 +30,11 @@ class DashboardPostController extends Controller
 
     public function GetCreatePostView(Request $request)
     {
-        return view('dashboard.body.posts.postCreate');
+        $categories = PostCategory::all();
+
+        return view('dashboard.body.posts.postCreate', [
+            'categories' => $categories,
+        ]);
     }
 
     public function CreatePost(Request $request)
@@ -39,13 +43,15 @@ class DashboardPostController extends Controller
             'title' => 'required|max:255',
             'content' => 'required',
             'file' => 'required|file|mimes:jpeg,jpg,png,gif',
+            'category' => 'required',
         ]);
+        $post = $this->postRepository->create(
+            $request->get('title'),
+            $request->get('content'),
+            $request->User(),
+            PostCategory::where('name', $request->get('category'))->first(),
+        );
 
-        $post = new Post();
-        $post->title = $validated['title'];
-        $post->content = $validated['content'];
-        $post->user_id = auth()->id();
-        $post->save();
         $file = $request->file('file');
         if ($file) {
             $this->postRepository->UploadImage($post, $file);
@@ -72,8 +78,11 @@ class DashboardPostController extends Controller
             'content' => 'required',
             'visible' => '',
         ]);
-
-        $this->postRepository->Update($id, $validated);
+        $post = Post::find($id);
+        $post->title = $request->get('title');
+        $post->content = $request->get('content');
+        $post->visible = $request->get('visible');
+        $post->save();
         return redirect(route('dashboard.posts.show'));
     }
 
@@ -106,7 +115,8 @@ class DashboardPostController extends Controller
         ]);
     }
 
-    public function DeleteThumbnail(Request $request) {
+    public function DeleteThumbnail(Request $request)
+    {
         $validated = $request->validate([
             'post_id' => 'required|integer',
         ]);
